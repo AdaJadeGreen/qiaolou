@@ -1,0 +1,23 @@
+Blender 5.3.0
+谯楼_废墟: 8 mesh objects, 982 faces, empty=[]
+谯楼_建立中: 23 mesh objects, 2053 faces, empty=[]
+谯楼_建成后: 21 mesh objects, 1805 faces, empty=[]
+鲁肃: 16 mesh objects, 1220 faces, empty=[]
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/00_谯楼_废墟_正视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/01_谯楼_废墟_侧视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/02_谯楼_废墟_后视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/03_谯楼_废墟_顶视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/04_谯楼_建立中_正视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/05_谯楼_建立中_侧视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/06_谯楼_建立中_后视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/07_谯楼_建立中_顶视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/08_谯楼_建成后_正视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/09_谯楼_建成后_侧视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/10_谯楼_建成后_后视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/11_谯楼_建成后_顶视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/12_鲁肃_正视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/13_鲁肃_侧视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/14_鲁肃_后视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders/15_鲁肃_顶视.png
+saved C:/Users/pjwly/3D Objects/lousu_ch1/lousu_ch1_greybox.blend
+OK

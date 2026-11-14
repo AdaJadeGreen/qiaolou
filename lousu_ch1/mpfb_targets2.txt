@@ -1,0 +1,171 @@
+    @staticmethod
+    def set_target_value(blender_object, target_name, value, delete_target_on_zero=False):
+        """
+        Set the value of a specific shape key (target) on a Blender object.
+
+        This method updates the value of a shape key with the specified name in the provided Blender object.
+        Optionally, it can delete the shape key if the value is set to zero.
+
+        Args:
+            blender_object (bpy.types.Object): The Blender object to modify.
+            target_name (str): The name of the shape key to set the value for.
+            value (float): The value to set for the shape key.
+            delete_target_on_zero (bool, optional): Whether to delete the shape key if the value is set to zero. Defaults to False.
+
+        Raises:
+            ValueError: If the provided object is not valid or does not have any shape keys.
+        """
+        if blender_object is None or target_name is None or not target_name:
+            _LOG.error("Empty object or target", (blender_object, target_name))
+            raise ValueError('Empty object or target')
+
+        keys = blender_object.data.shape_keys
+
+        if keys is None or keys.key_blocks is None or len(keys.key_blocks) < 1:
+            _LOG.error("Object does not have any shape keys")
+            raise ValueError('Empty object or target')
+
+        for shape_key in keys.key_blocks:
+            if shape_key.name == target_name:
+                shape_key.value = value
+                if value < 0.0001 and delete_target_on_zero:
+                    blender_object.shape_key_remove(shape_key)
+    @staticmethod
+    def target_full_path(target_name):
+        """
+        Retrieve the full file path of a target by its name.
+
+        This method searches for the target file in several directories, including system targets, custom targets,
+        and all potential target directories. It returns the full path to the target file if found.
+
+        Args:
+            target_name (str): The name of the target to search for.
+
+        Returns:
+            str: The full file path of the target if found, otherwise None.
+        """
+        _LOG.enter()
+
+        # Within a directory an exact basename match is always preferred over a mere prefix
+        # match, so that a request for "l-eye-bag-in" resolves to "l-eye-bag-in.target.gz" and not
+        # to "l-eye-bag-incr.target.gz" (both start with the requested name). The prefix match is
+        # kept as a fallback for the historical callers that pass a partial name.
+        lowered = str(target_name).lower()
+
+        def _match_in(paths):
+            prefix_match = None
+            for path in paths:
+                basename = str(os.path.basename(path)).lower()
+                stem = basename[:-len(".target.gz")] if basename.endswith(".target.gz") else basename[:-len(".target")]
+                if stem == lowered:
+                    return str(path)
+                if prefix_match is None and basename.startswith(lowered):
+                    prefix_match = str(path)
+            return prefix_match
+
+        # Strategy: First scan the system targets. This is the vast majority of cases,
+        # so it makes sense to check if the target is there first
+        targets_dir = LocationService.get_mpfb_data("targets")
+        _LOG.debug("Target dir:", targets_dir)
+        found = _match_in(Path(targets_dir).rglob("*.target.gz"))
+        if found:
+            return found
+        _LOG.debug("Did not find matching system target for", target_name)
+
+        # Next scan the custom targets dir. This can be expected to be a small list of targets
+        custom_asset_roots = AssetService.get_asset_roots("custom")
+        custom_asset_roots.extend(AssetService.get_asset_roots("targets/custom"))
+        custom_targets = AssetService.find_asset_files_matching_pattern(custom_asset_roots, "*.target")
+        custom_targets.extend(AssetService.find_asset_files_matching_pattern(custom_asset_roots, "*.target.gz"))
+        found = _match_in(custom_targets)
+        if found:
+            return found
+        _LOG.debug("Did not find matching custom target for", target_name)
+
+        # Finally scan all potential dirs for targets
+        target_asset_roots = AssetService.get_asset_roots("targets")
+        targets = AssetService.find_asset_files_matching_pattern(target_asset_roots, "*.target")
+        targets.extend(AssetService.find_asset_files_matching_pattern(target_asset_roots, "*.target.gz"))
+        found = _match_in(targets)
+        if found:
+            return found
+
+        _LOG.warn("Did not find matching target for", target_name)
+        return None
+    @staticmethod
+    def add_builtin_rig(basemesh, rig_name, *, import_weights=True, operator=None):
+        """
+        Adds a built-in rig to the given basemesh.
+
+        Args:
+            basemesh (bpy.types.Object): The basemesh object to which the rig will be added.
+            rig_name (str): The name of the rig to be added. If it starts with "rigify.", it will be treated as a Rigify rig.
+            import_weights (bool): Whether to import weights for the rig. Default is True.
+            operator (bpy.types.Operator, optional): The operator calling this function, used for reporting errors. Default is None.
+
+        Returns:
+            bpy.types.Object: The created armature object, or None if the rig file could not be found.
+        """
+        is_rigify = rig_name.startswith("rigify.")
+        if is_rigify and not SystemService.check_for_rigify():
+            raise NotImplementedError("Rigify is not available, please enable it to use rigify rigs")
+        rig_name_base = rig_name[7:] if is_rigify else rig_name
+
+        # Determine the rig file name
+        rigs_dir = LocationService.get_mpfb_data("rigs")
+        rigs_subdir = os.path.join(rigs_dir, "rigify" if is_rigify else "standard")
+
+        rig_file = os.path.join(rigs_subdir, "rig." + rig_name_base + ".json")
+
+        if not os.path.isfile(rig_file):
+            if operator is not None:
+                operator.report({'ERROR'}, "Could not find the rig file: " + rig_file)
+            else:
+                raise IOError("Could not find the rig file: " + rig_file)
+            return None
+
+        # Load the rig from file
+        rig = Rig.from_json_file_and_basemesh(rig_file, basemesh)
+        armature_object = rig.create_armature_and_fit_to_basemesh()
+
+        # Assign a name to the armature
+        name = basemesh.name + (".metarig" if is_rigify else ".rig")
+        armature_object.name = armature_object.data.name = name
+
+        # Type-specific handling
+        if is_rigify:
+            assert len(armature_object.data.rigify_colors) > 0
+
+            if hasattr(armature_object.data, 'rigify_rig_basename'):
+                armature_object.data.rigify_rig_basename = "Human.rigify"
+
+        else:
+            RigService.normalize_rotation_mode(armature_object)
+
+        # Parent the mesh to the rig
+        basemesh.parent = armature_object
+
+        armature_object.location = basemesh.location
+        basemesh.location = (0.0, 0.0, 0.0)
+
+        # Load weights and create the armature modifier
+        if import_weights:
+            for try_rig in RigService.get_rig_weight_fallbacks(rig_name):
+                if try_rig.startswith("rigify."):
+                    try_rig = try_rig[7:]
+
+                weights_file = os.path.join(rigs_subdir, "weights." + try_rig + ".json")
+
+                if os.path.isfile(weights_file):
+                    RigService.load_weights(armature_object, basemesh, weights_file)
+                    break
+            else:
+                if operator is not None:
+                    operator.report({'ERROR'}, "Could not find the weights file")
+
+            RigService.ensure_armature_modifier(basemesh, armature_object)
+
+        return armature_object
+
+BONES breast.L breast.R clavicle.L clavicle.R eye.L eye.R finger1-1.L finger1-1.R finger1-2.L finger1-2.R finger1-3.L finger1-3.R finger2-1.L finger2-1.R finger2-2.L finger2-2.R finger2-3.L finger2-3.R finger3-1.L finger3-1.R finger3-2.L finger3-2.R finger3-3.L finger3-3.R finger4-1.L finger4-1.R finger4-2.L finger4-2.R finger4-3.L finger4-3.R finger5-1.L finger5-1.R finger5-2.L finger5-2.R finger5-3.L finger5-3.R foot.L foot.R head jaw levator02.L levator02.R levator03.L levator03.R levator04.L levator04.R levator05.L levator05.R levator06.L levator06.R lowerarm01.L lowerarm01.R lowerarm02.L lowerarm02.R lowerleg01.L lowerleg01.R lowerleg02.L lowerleg02.R metacarpal1.L metacarpal1.R metacarpal2.L metacarpal2.R metacarpal3.L metacarpal3.R metacarpal4.L metacarpal4.R neck01 neck02 neck03 oculi01.L oculi01.R oculi02.L oculi02.R orbicularis03.L orbicularis03.R orbicularis04.L orbicularis04.R oris01 oris02 oris03.L oris03.R oris04.L oris04.R oris05 oris06 oris06.L oris06.R oris07.L oris07.R pelvis.L pelvis.R risorius02.L risorius02.R risorius03.L risorius03.R root shoulder01.L shoulder01.R special01 special03 special04 special05.L special05.R special06.L special06.R spine01 spine02 spine03 spine04 spine05 temporalis01.L temporalis01.R temporalis02.L temporalis02.R toe1-1.L toe1-1.R toe1-2.L toe1-2.R toe2-1.L toe2-1.R toe2-2.L toe2-2.R toe2-3.L toe2-3.R toe3-1.L toe3-1.R toe3-2.L toe3-2.R toe3-3.L toe3-3.R toe4-1.L toe4-1.R toe4-2.L toe4-2.R toe4-3.L toe4-3.R toe5-1.L toe5-1.R toe5-2.L toe5-2.R toe5-3.L toe5-3.R tongue00 tongue01 tongue02 tongue03 tongue04 tongue05.L tongue05.R tongue06.L tongue06.R tongue07.L tongue07.R upperarm01.L upperarm01.R upperarm02.L upperarm02.R upperleg01.L upperleg01.R upperleg02.L upperleg02.R wrist.L wrist.R
+SAMPLE {"head": {"cube_name": "joint-l-shoulder", "default_position": [0.1700395941734314, -0.019311200827360153, 0.5021342039108276], "strategy": "CUBE"}, "inherit_scale": "FULL", "parent": "shoulder01.L", "rigify": {}, "roll": 2.3827133178710938, "tail": {"default_position": [0.217001274228096, -0.017674963921308517, 0.4479554295539856], "strategy": "MEAN", "vertex_indices": [8057, 17023]}, "use_connect": false, "use_inherit_rotation": true, "use_local_location": true}

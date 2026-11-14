@@ -1,0 +1,33 @@
+Blender 5.3.0
+谯楼_废墟: 18 mesh objects, 4211 faces
+谯楼_建立中: 39 mesh objects, 11693 faces
+谯楼_建成后: 46 mesh objects, 26184 faces
+鲁肃: 27 mesh objects, 2509 faces
+鲁肃_随身物品: 10 mesh objects, 878 faces
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/00_谯楼_废墟_正视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/01_谯楼_废墟_侧视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/02_谯楼_废墟_后视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/03_谯楼_废墟_顶视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/04_谯楼_废墟_透视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/05_谯楼_建立中_正视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/06_谯楼_建立中_侧视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/07_谯楼_建立中_后视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/08_谯楼_建立中_顶视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/09_谯楼_建立中_透视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/10_谯楼_建成后_正视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/11_谯楼_建成后_侧视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/12_谯楼_建成后_后视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/13_谯楼_建成后_顶视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/14_谯楼_建成后_透视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/15_鲁肃_正视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/16_鲁肃_侧视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/17_鲁肃_后视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/18_鲁肃_顶视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/19_鲁肃_透视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/20_鲁肃_随身物品_正视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/21_鲁肃_随身物品_侧视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/22_鲁肃_随身物品_后视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/23_鲁肃_随身物品_顶视.png
+rendered C:/Users/pjwly/3D Objects/lousu_ch1/renders_v2/24_鲁肃_随身物品_透视.png
+saved C:/Users/pjwly/3D Objects/lousu_ch1/lousu_ch1_greybox_v2.blend
+OK

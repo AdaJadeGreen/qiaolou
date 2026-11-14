@@ -1,0 +1,18 @@
+Blender 5.3.0
+[   0.0s] body ok
+[   1.2s] static parts ok
+[   5.4s] sim 下裳 done
+[  23.0s] sim 外袍 done
+[  39.3s] sim 大袖/蔽膝/绅 done
+[  39.3s] garments finalized, sim_ok=True
+[  39.3s] cycles device OPTIX
+[ 210.1s] rendered 正视
+[ 225.2s] rendered 侧视
+[ 241.3s] rendered 后视
+[ 261.1s] rendered 透视
+[ 276.6s] rendered 面部特写
+[ 291.2s] rendered 手袖特写
+[ 310.7s] rendered 透视 色块
+[ 326.4s] rendered 正视 色块
+[ 327.6s] saved C:/Users/pjwly/3D Objects/lousu_ch1/lusu_v3.blend
+OK
